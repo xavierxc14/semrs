@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<display-name>semrs</display-name>
+	
+    <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/applicationContext.xml
+			/WEB-INF/applicationContext-security-ns.xml
+		</param-value>
+	</context-param>
+   	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+   
+    <listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+	
+	<listener>
+		<listener-class>
+			com.googlecode.semrs.web.ContextListener
+		</listener-class>
+	</listener>
+	
+	<!-- listener>
+		<listener-class>
+			com.googlecode.semrs.web.SessionListener
+		</listener-class>
+	</listener> -->
+
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>StartupServlet</servlet-name>
+		<servlet-class>
+			com.googlecode.semrs.server.StartupServlet
+		</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+	
+   <servlet>
+       <servlet-name>UserServlet</servlet-name>
+       <servlet-class>com.googlecode.semrs.server.UserServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>UserServlet</servlet-name>
+       <url-pattern>/userServlet</url-pattern>
+   </servlet-mapping>
+   
+      <servlet>
+       <servlet-name>GroupServlet</servlet-name>
+       <servlet-class>com.googlecode.semrs.server.GroupServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>GroupServlet</servlet-name>
+       <url-pattern>/groupServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+   	<servlet-name>RoleServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.RoleServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>RoleServlet</servlet-name>
+   	<url-pattern>/roleServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+   	<servlet-name>DrugServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.DrugServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>DrugServlet</servlet-name>
+   	<url-pattern>/drugServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+   	<servlet-name>LabTestServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.LabTestServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>LabTestServlet</servlet-name>
+   	<url-pattern>/labTestServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+   	<servlet-name>SymptomServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.SymptomServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>SymptomServlet</servlet-name>
+   	<url-pattern>/symptomServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+   	<servlet-name>DiseaseServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.DiseaseServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>DiseaseServlet</servlet-name>
+   	<url-pattern>/diseaseServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+   	<servlet-name>ProcedureServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.ProcedureServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>ProcedureServlet</servlet-name>
+   	<url-pattern>/procedureServlet</url-pattern>
+   </servlet-mapping>
+
+   <servlet>
+   	<servlet-name>ComplicationServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.ComplicationServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>ComplicationServlet</servlet-name>
+   	<url-pattern>/complicationServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+   	<servlet-name>PatientServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.PatientServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>PatientServlet</servlet-name>
+   	<url-pattern>/patientServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+   	<servlet-name>EncounterServlet</servlet-name>
+   	<servlet-class>
+   		com.googlecode.semrs.server.EncounterServlet
+   	</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+   	<servlet-name>EncounterServlet</servlet-name>
+   	<url-pattern>/encounterServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+       <servlet-name>ForgotPassword</servlet-name>
+       <servlet-class>com.googlecode.semrs.server.ForgotPasswordServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>ForgotPassword</servlet-name>
+       <url-pattern>/forgotPassword</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+       <servlet-name>FileTreeServlet</servlet-name>
+       <servlet-class>com.googlecode.semrs.server.FileTreeServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>FileTreeServlet</servlet-name>
+       <url-pattern>/fileTreeServlet</url-pattern>
+   </servlet-mapping>
+   
+   <servlet>
+       <servlet-name>ImageServlet</servlet-name>
+       <servlet-class>com.googlecode.semrs.server.ImageServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+       <servlet-name>ImageServlet</servlet-name>
+       <url-pattern>/imageServlet</url-pattern>
+   </servlet-mapping>
+
+   <error-page>
+       <error-code>500</error-code>
+   	   <location>/login.jsp</location>
+   </error-page>
+   <error-page>
+   	   <error-code>404</error-code>
+   	   <location>/login.jsp</location>
+   </error-page>
+
+   <welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

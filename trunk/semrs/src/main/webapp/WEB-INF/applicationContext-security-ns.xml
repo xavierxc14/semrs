@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+	- Sample namespace-based configuration
+	-
+	- $Id: applicationContext-security-ns.xml 2923 2008-04-12 17:17:46Z luke_t $
+-->
+
+<bean:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:bean="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd">
+
+	<global-method-security secured-annotations="enabled">
+		<!-- AspectJ pointcut expression that locates our "post" method and applies security that way
+			<protect-pointcut expression="execution(* bigbank.*Service.post*(..))" access="ROLE_TELLER"/>
+		-->
+	</global-method-security>
+
+
+	<http auto-config="true">
+		<intercept-url pattern="/**"
+			access="IS_AUTHENTICATED_REMEMBERED" />
+		<intercept-url pattern="/secure/extreme/**"
+			access="ROLE_SUPERVISOR" />
+		<intercept-url pattern="/secure/**"
+			access="IS_AUTHENTICATED_REMEMBERED" />
+		<intercept-url pattern="/com.googlecode.semrs.main/**"
+			access="IS_AUTHENTICATED_REMEMBERED" />
+		<intercept-url pattern="/login.jsp*" filters="none" />
+		<intercept-url pattern="/logo/semrs_logo.png*" filters="none" />
+		<intercept-url pattern="/forgotPassword*"     filters="none" />
+		<intercept-url pattern="/forgotPassword.jsp*" filters="none" />
+		<intercept-url pattern="/favicon.ico*" filters="none" />
+		<form-login login-page='/login.jsp' />
+		<!-- Disable web URI authorization, as we're using <global-method-security> and have @Secured the services layer instead
+			<intercept-url pattern="/listAccounts.html" access="IS_AUTHENTICATED_REMEMBERED" />
+			<intercept-url pattern="/post.html" access="ROLE_TELLER" />
+		-->
+
+		<!-- Uncomment to limit the number of sessions a user can have
+			<concurrent-session-control max-sessions="1" exception-if-maximum-exceeded="true"/>
+		-->
+	</http>
+
+
+
+	<bean:bean id="loggerListener"
+		class="org.springframework.security.event.authentication.LoggerListener" />
+		
+    <bean:bean id="lastLoginListener" class="com.googlecode.semrs.server.security.LastLoginListener">
+     <bean:property name="userService" ref="userService"/>
+    </bean:bean>	
+
+
+	<authentication-provider user-service-ref="userProxyService">
+
+		<password-encoder hash="sha" />
+
+	</authentication-provider>
+	
+
+
+</bean:beans>
