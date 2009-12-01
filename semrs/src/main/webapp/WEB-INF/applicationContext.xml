@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="propertyConfigurer" 
+ class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location">
+       <value>/WEB-INF/semrs-config.properties</value>
+    </property>
+</bean>
+
+<bean id="dataSource"
+  class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+     <property name="driverClassName">
+		<value>${com.googlecode.semrs.jdbc.driver.name}</value>
+	 </property>
+	 <property name="url">
+		<value>${com.googlecode.semrs.jdbc.url}</value>
+	 </property>
+	 <property name="username">
+		<value>${com.googlecode.semrs.jdbc.username}</value>
+	 </property>
+	 <property name="password">
+		<value>${com.googlecode.semrs.jdbc.password}</value>
+	 </property>
+	 <property name="maxActive">  
+	    <value>10</value>  
+	 </property>  
+	 <property name="maxIdle"> 
+	    <value>2</value>  
+	 </property>  
+	 <property name="maxWait">  
+	    <value>100</value>  
+	 </property>  
+	 <property name="testOnBorrow">  
+	    <value>true</value>  
+	 </property>  
+	 <property name="validationQuery">   
+	    <value>select 1</value>  
+	 </property> 
+</bean>
+
+<bean id="propertiesInfo"
+  class="com.googlecode.semrs.util.PropertiesInfo">
+     <property name="dbType">
+		<value>${com.googlecode.semrs.jdbc.db.type}</value>
+	 </property>
+	 <property name="reload">
+		<value>${com.googlecode.semrs.jdbc.reload}</value>
+	 </property>
+	  <property name="nameSpace">
+		<value>${com.googlecode.semrs.namespace}</value>
+	 </property>
+	 <property name="timeZone">
+		<value>${com.googlecode.semrs.timezone}</value>
+	 </property>
+</bean>
+
+<bean id="mailSender"
+	 class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	 <property name="host">
+	   <value>${com.googlecode.semrs.smtp.host}</value>
+	 </property>
+	 <property name="port">
+	   <value>${com.googlecode.semrs.smtp.port}</value>
+	 </property>
+	 <property name="username">
+	   <value>${com.googlecode.semrs.smtp.user}</value>
+	 </property>
+	 <property name="password">
+	   <value>${com.googlecode.semrs.smtp.password}</value>
+	 </property>
+</bean>
+
+<bean id="newPasswordNotifier"
+      class="com.googlecode.semrs.server.NewPasswordNotifier">
+      <property name="mailSender" ref="mailSender" />
+      <property name="from">
+        <value>${com.googlecode.semrs.smtp.email}</value>
+      </property>
+      <property name="title" value="SEMRS - Activación de nueva contraseña"/>
+</bean>
+
+
+	<!-- Turn on @Required -->
+<bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+
+<bean id="datasourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+   <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<bean id="dataManager" class="com.googlecode.semrs.server.dao.DataManager" destroy-method="closeConnection">
+   <property name="dataSource" ref="dataSource" />
+   <property name="propertiesInfo" ref="propertiesInfo" />
+</bean>	
+
+<bean id="genericDAO" class="com.googlecode.semrs.server.dao.jenaimpl.GenericDAOJenaImpl">
+   <property name="dataManager" ref="dataManager" />     
+</bean>	
+
+<bean id="genericService" class="com.googlecode.semrs.server.service.jenaimpl.GenericServiceJenaImpl">
+   <property name="genericDAO" ref="genericDAO" />
+</bean>	
+
+<bean id="userDAO" class="com.googlecode.semrs.server.dao.jenaimpl.UserDAOJenaImpl" />
+
+
+<bean id="userService" class="com.googlecode.semrs.server.service.jenaimpl.UserServiceJenaImpl">
+   <property name="userDAO" ref="userDAO" />     
+</bean>
+
+<bean id="userProxyService" class="com.googlecode.semrs.server.service.proxy.UserProxyService">
+   <property name="userService" ref="userService" />     
+   <property name="genericService" ref="genericService" />     
+</bean>
+
+<bean id="groupService" class="com.googlecode.semrs.server.service.jenaimpl.GroupServiceJenaImpl">
+   <property name="groupDAO" ref="groupDAO" />     
+</bean>
+
+<bean id="groupDAO" class="com.googlecode.semrs.server.dao.jenaimpl.GroupDAOJenaImpl" />
+
+
+<bean id="roleService" class="com.googlecode.semrs.server.service.jenaimpl.RoleServiceJenaImpl">
+   <property name="roleDAO" ref="roleDAO" />     
+</bean>
+
+<bean id="roleDAO" class="com.googlecode.semrs.server.dao.jenaimpl.RoleDAOJenaImpl" />
+
+
+<bean id="drugService" class="com.googlecode.semrs.server.service.jenaimpl.DrugServiceJenaImpl">
+   <property name="drugDAO" ref="drugDAO" />     
+</bean>
+
+<bean id="drugDAO" class="com.googlecode.semrs.server.dao.jenaimpl.DrugDAOJenaImpl" />
+
+
+<bean id="labTestService" class="com.googlecode.semrs.server.service.jenaimpl.LabTestServiceJenaImpl">
+   <property name="labTestDAO" ref="labTestDAO" />     
+</bean>
+
+<bean id="labTestDAO" class="com.googlecode.semrs.server.dao.jenaimpl.LabTestDAOJenaImpl" />
+
+
+<bean id="symptomService" class="com.googlecode.semrs.server.service.jenaimpl.SymptomServiceJenaImpl">
+   <property name="symptomDAO" ref="symptomDAO" />     
+</bean>
+
+<bean id="symptomDAO" class="com.googlecode.semrs.server.dao.jenaimpl.SymptomDAOJenaImpl" />
+
+
+<bean id="diseaseService" class="com.googlecode.semrs.server.service.jenaimpl.DiseaseServiceJenaImpl">
+   <property name="diseaseDAO" ref="diseaseDAO" />     
+</bean>
+
+<bean id="diseaseDAO" class="com.googlecode.semrs.server.dao.jenaimpl.DiseaseDAOJenaImpl" />
+
+
+<bean id="procedureService" class="com.googlecode.semrs.server.service.jenaimpl.ProcedureServiceJenaImpl">
+   <property name="procedureDAO" ref="procedureDAO" />     
+</bean>
+
+<bean id="procedureDAO" class="com.googlecode.semrs.server.dao.jenaimpl.ProcedureDAOJenaImpl" />
+
+
+<bean id="complicationService" class="com.googlecode.semrs.server.service.jenaimpl.ComplicationServiceJenaImpl">
+   <property name="complicationDAO" ref="complicationDAO" />     
+</bean>
+
+<bean id="complicationDAO" class="com.googlecode.semrs.server.dao.jenaimpl.ComplicationDAOJenaImpl" />
+
+
+<bean id="patientService" class="com.googlecode.semrs.server.service.jenaimpl.PatientServiceJenaImpl">
+   <property name="patientDAO" ref="patientDAO" />     
+</bean>
+
+<bean id="patientDAO" class="com.googlecode.semrs.server.dao.jenaimpl.PatientDAOJenaImpl" />
+
+
+<bean id="encounterService" class="com.googlecode.semrs.server.service.jenaimpl.EncounterServiceJenaImpl">
+   <property name="encounterDAO" ref="encounterDAO" />     
+</bean>
+
+<bean id="encounterDAO" class="com.googlecode.semrs.server.dao.jenaimpl.EncounterDAOJenaImpl">
+    <property name="ageWeight">
+	   <value>${com.googlecode.semrs.diagnosis.ageWeight}</value>
+	</property>
+	<property name="sexWeight">
+	   <value>${com.googlecode.semrs.diagnosis.sexWeight}</value>
+	</property>
+	<property name="toxicHabitsWeight">
+	   <value>${com.googlecode.semrs.diagnosis.toxicHabitsWeight}</value>
+	</property>
+	<property name="symptomsWeight">
+	   <value>${com.googlecode.semrs.diagnosis.symptomsWeight}</value>
+	</property>
+	<property name="labTestsWeight">
+	   <value>${com.googlecode.semrs.diagnosis.labTestsWeight}</value>
+	</property>
+	<property name="relDiseasesWeight">
+	   <value>${com.googlecode.semrs.diagnosis.relDiseasesWeight}</value>
+	</property>
+	<property name="proceduresWeight">
+	   <value>${com.googlecode.semrs.diagnosis.proceduresWeight}</value>
+	</property>
+	<property name="severityLowWeight">
+	   <value>${com.googlecode.semrs.diagnosis.severityLowWeight}</value>
+	</property>
+    <property name="severityMediumWeight">
+	   <value>${com.googlecode.semrs.diagnosis.severityMediumWeight}</value>
+	</property>
+	<property name="severityHighWeight">
+	   <value>${com.googlecode.semrs.diagnosis.severityHighWeight}</value>
+	</property>
+	<property name="severityVeryHighWeight">
+	   <value>${com.googlecode.semrs.diagnosis.severityVeryHighWeight}</value>
+	</property>
+	<property name="addWeightsByDefault">
+	   <value>${com.googlecode.semrs.diagnosis.addWeightsByDefault}</value>
+	</property>
+</bean>	
+
+<bean name="deletePendingEncountersJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+	<property name="jobClass"
+		value="com.googlecode.semrs.server.job.DeletePendingEncountersJob" />
+</bean>
+
+<bean id="timeZone" class="java.util.TimeZone" factory-method="getTimeZone">
+   <constructor-arg>
+      <value>${com.googlecode.semrs.timezone}</value>
+   </constructor-arg>
+</bean>
+
+<bean id="deletePendingEncountersTrigger"
+	class="org.springframework.scheduling.quartz.CronTriggerBean">
+	<property name="jobDetail" ref="deletePendingEncountersJob" />
+	<property name="cronExpression" value="0 0 0 * * ?" />
+	<property name="timeZone" ref="timeZone" />
+</bean>
+
+	<bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="deletePendingEncountersTrigger" />
+			</list>
+		</property>
+		<property name="applicationContextSchedulerContextKey">
+			<value>applicationContext</value>
+		</property>
+		<property name="schedulerContextAsMap">
+			<map>
+				<entry key="encounterService">
+					<ref bean="encounterService" />
+				</entry>
+			</map>
+		</property>
+		<property name="quartzProperties">
+		  <props>
+             <!-- Configure ThreadPool -->
+             <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+             <prop key="org.quartz.threadPool.threadCount">10</prop>
+             <prop key="org.quartz.threadPool.threadPriority">5</prop>
+           </props>
+         </property> 
+		<property name="dataSource" ref="dataSource" />
+        <property name="transactionManager" ref="datasourceTransactionManager"/>
+	</bean>
+
+</beans>
